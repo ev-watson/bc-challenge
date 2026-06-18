@@ -7,5 +7,5 @@ Then pooling for statistical aggregation (effectively acting as an inductive bia
 Then residue pooling over the embedded vectors to achieve relatively cheap periodic positional encoding\
 Then passes into a standard 5 layer MLP with hidden_dim=256 with standard generalization features (dropout, weight decay, layer norms)
 
-Has about ~95% accuracy
+Has about ~97.8% accuracy
 
