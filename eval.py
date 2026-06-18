@@ -21,7 +21,7 @@ for _ in range(550):
 
     s.log.info("Guess:[{: >9}]   Answer:[{: >9}]   Wins:[{: >3}]".format(config.ARCHITECTURES[guess], s.ans, s.wins))
 
-    if s.wins >= 500:
+    if s.wins >= 501:
         print("WINNING THRESHOLD REACHED, SEARCHING FOR HASH...")
         if s.hash:
             s.log.info("You win! {}".format(s.hash))
