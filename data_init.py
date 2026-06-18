@@ -37,14 +37,14 @@ class BCDataModule(LightningDataModule):
         self.labels = np.load(config.LABELS_PATH, mmap_mode='r')
         n = len(self.data)
 
-        self.train_data = self.data[:int(config.SPLIT * n)]
-        self.train_labels = self.labels[:int(config.SPLIT * n)]
+        self.train_data = self.data[:int(config.TRAIN_SPLIT * n)]
+        self.train_labels = self.labels[:int(config.TRAIN_SPLIT * n)]
 
-        self.val_data = self.data[int(config.SPLIT * n):int(2 * config.SPLIT * n)]
-        self.val_labels = self.labels[int(config.SPLIT * n):int(2 * config.SPLIT * n)]
+        self.val_data = self.data[int(config.TRAIN_SPLIT * n):int(config.VAL_SPLIT * n)]
+        self.val_labels = self.labels[int(config.TRAIN_SPLIT * n):int(config.VAL_SPLIT * n)]
 
-        self.test_data = self.data[int(2 * config.SPLIT * n):]
-        self.test_labels = self.labels[int(2 * config.SPLIT * n):]
+        self.test_data = self.data[int(config.VAL_SPLIT * n):]
+        self.test_labels = self.labels[int(config.VAL_SPLIT * n):]
 
         self.train_dataset = BCDataset(self.train_data, self.train_labels)
         self.val_dataset = BCDataset(self.val_data, self.val_labels)

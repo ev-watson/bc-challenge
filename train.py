@@ -12,7 +12,7 @@ datamodule = BCDataModule()
 model = BinaryClassifier()
 
 freq = 5
-log_steps = max(1, int(config.SPLIT * config.NUM_SAMPLES / config.BATCH_SIZE / freq))
+log_steps = max(1, int(config.TRAIN_SPLIT * config.NUM_SAMPLES / config.BATCH_SIZE / freq))
 
 trainer = Trainer(
     max_epochs=config.MAX_EPOCHS,

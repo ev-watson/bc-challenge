@@ -21,7 +21,7 @@ class BinaryClassifier(LightningModule):
         x = F.relu(x)
         for layer in self.hidden_layers:
             x = F.relu(layer(x))
-        return F.softmax(self.output_layer(x), dim=1)
+        return self.output_layer(x)
 
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -35,6 +35,13 @@ class BinaryClassifier(LightningModule):
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         self.log("val_loss", loss, on_epoch=True, on_step=False, prog_bar=True, logger=True)
+        return loss
+    
+    def test_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = F.cross_entropy(y_hat, y)
+        self.log("test_loss", loss, on_epoch=True, on_step=False, prog_bar=True, logger=True)
         return loss
     
     def configure_optimizers(self):
