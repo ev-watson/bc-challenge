@@ -16,11 +16,26 @@ class BinaryClassifier(LightningModule):
         ])
         self.output_layer = nn.Linear(config.HIDDEN_DIM, config.OUTPUT_DIM)
 
+        # bytes live in 0-255, so num_embeddings=256
+        self.embeddings = nn.Embedding(256, config.INPUT_DIM)
+
+        self.dropouts = nn.ModuleList([
+            nn.Dropout(config.DROPOUT_RATE) for _ in range(config.NUM_HIDDEN_LAYERS)
+        ])
+
+        self.layer_norms = nn.ModuleList([
+            nn.LayerNorm(config.HIDDEN_DIM) for _ in range(config.NUM_HIDDEN_LAYERS)
+        ])
+
     def forward(self, x):
+        x = self.embeddings(x)
+        x = x.mean(dim=1)  # mean pool for histogram
         x = self.input_layer(x)
         x = F.relu(x)
-        for layer in self.hidden_layers:
+        for layer, dropout, layer_norm in zip(self.hidden_layers, self.dropouts, self.layer_norms):
+            x = layer_norm(x)
             x = F.relu(layer(x))
+            x = dropout(x)
         return self.output_layer(x)
 
     def training_step(self, batch, batch_idx):
@@ -45,4 +60,4 @@ class BinaryClassifier(LightningModule):
         return loss
     
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=config.LEARNING_RATE)
+        return torch.optim.AdamW(self.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)

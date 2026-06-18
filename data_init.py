@@ -23,8 +23,8 @@ class BCDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        # scale and ensure data is float32 (MPS)
-        x = torch.tensor(self.data[idx] / 255.0, dtype=torch.float32)
+        # ensure data is long for embedding
+        x = torch.tensor(self.data[idx], dtype=torch.long)
         y = torch.tensor(self.labels[idx], dtype=torch.float32)
         return x, y
 
@@ -95,4 +95,34 @@ if __name__ == "__main__":
     # np.save('bdata.npy', bdata)
     # np.save('labels.npy', labels)
 
-    data_module = BCDataModule()
+    s = Server()
+
+    num_samples = config.NUM_SAMPLES - 5000
+
+    bdata = np.empty((num_samples, 64), dtype=np.uint8)
+    labels = np.empty((num_samples, 12), dtype=np.uint8)
+
+    for i in tqdm(range(num_samples), desc="Generating data"):
+        s.get()
+
+        bdata[i] = np.frombuffer(s.binary, dtype=np.uint8)
+
+        # choose random target just to get the label
+        target = random.choice(s.targets)
+        s.post(target)
+
+        labels[i] = one_hot_encode(s.ans)
+
+    previous_bdata = np.load(config.DATA_PATH)
+    previous_labels = np.load(config.LABELS_PATH)
+
+    new_bdata = np.concatenate((previous_bdata, bdata), axis=0)
+    new_labels = np.concatenate((previous_labels, labels), axis=0)
+
+    print("New data shape:", new_bdata.shape)
+    print("New labels shape:", new_labels.shape)
+
+    np.save('bdata.npy', new_bdata)
+    np.save('labels.npy', new_labels)
+
+    # data_module = BCDataModule()

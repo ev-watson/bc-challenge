@@ -2,4 +2,4 @@
 
 My attempt at it, no LLM generated code.
 
-Uses standard MLP with 5 layers with each hidden layer consisting of 128 neurons, trained on 1000 samples
+Uses standard MLP with 5 layers with each hidden layer consisting of 256 neurons, trained on 5000 samples
