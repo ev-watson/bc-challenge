@@ -12,7 +12,7 @@ model.eval()
 
 s = Server()
 
-for _ in range(600):
+for _ in range(200):
     s.get()
     binary_input = torch.tensor(np.frombuffer(s.binary, dtype=np.uint8), dtype=torch.long)
 
