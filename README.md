@@ -7,5 +7,27 @@ Then pooling for statistical aggregation (effectively acting as an inductive bia
 Then residue pooling over the embedded vectors to achieve relatively cheap periodic positional encoding\
 Then passes into a standard 5 layer MLP with hidden_dim=256 with standard generalization features (dropout, weight decay, layer norms)
 
-Has about ~97.8% accuracy and does not use the provided possible target list as a prior
+Has about ~98% accuracy and does not use the provided possible target list as a prior
+
+Model is available at `bcmodel.pt`, usage:
+```
+import torch
+import numpy as np
+
+import config
+from model import BinaryClassifier
+
+# load model and turn off weight adjustment
+model = BinaryClassifier()
+model.load_state_dict(torch.load(config.MODEL_PATH))
+model.eval()
+
+# load input
+BINARY = ... # Some np.ndarray of len 64 dtype=np.uint8
+binary_input = torch.tensor(BINARY, dtype=torch.long)
+
+# make output and take argmax to isolate highest probability
+output = model(binary_input.unsqueeze(0)).argmax(dim=1).item()
+architecture = config.ARCHITECTURES[output] 
+```
 

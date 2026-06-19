@@ -17,6 +17,7 @@ class Server(object):
         self.hash    = None
         self.wins    = 0
         self.targets = []
+        self.json = None
 
     def _request(self, route, method='get', data=None):
         while True:
@@ -47,6 +48,7 @@ class Server(object):
         self.wins = r.get('correct', 0)
         self.hash = r.get('hash', self.hash)
         self.ans  = r.get('target', 'unknown')
+        self.json = r
         return r
 
 if __name__ == "__main__":
